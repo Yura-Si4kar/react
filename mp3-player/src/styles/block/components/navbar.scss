@@ -1,0 +1,147 @@
+.nav-column {
+  position: relative;
+  transition: width 0.3s;
+  background: var(--navbar-bg);
+  background-blend-mode: overlay, overlay, overlay, normal;
+
+  &.open {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+}
+
+.nav-bar {
+  transition: width 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.nav-list {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: normal;
+  min-width: 100%;
+  margin-right: auto;
+
+  @media (min-width: 631px) {
+    justify-content: start;
+  }
+
+  & a {
+    justify-content: center;
+    color: var(--white);
+    text-decoration: none;
+
+    @media (min-width: 631px) {
+      justify-content: start;
+    }
+  }
+
+  &.open {
+    flex-direction: row;
+    padding-top: 30px;
+
+    & .navbar-item-text {
+      display: block;
+    }
+  }
+
+  & .navbar-item-text {
+    display: none;
+
+    @media (min-width: 631px) {
+      display: block;
+    }
+  }
+}
+
+.navbar-item {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  padding: 5px 2px;
+
+  & .open {
+    padding: 30px 5px;
+  }
+
+  @media (min-width: 631px) {
+    width: auto;
+  }
+}
+
+.user-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: flex ease-in 0.2s;
+
+  @media (min-width: 631px) {
+    flex-direction: row !important;
+    align-items: center;
+  }
+
+  &.open {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  & .user-section-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    & .open {
+      justify-content: start;
+    }
+
+    & .text {
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (min-width: 631px) {
+      justify-content: flex-start;
+    }
+  }
+}
+
+.logout-box {
+  text-align: center;
+
+  @media (min-width: 631px) {
+    text-align: right;
+  }
+
+  & .logout-button {
+    padding: 2px 2px 2px 5px;
+  }
+}
+
+.toggle-button {
+  position: absolute;
+  top: 0;
+  right: -35px;
+  transform: rotate(90deg);
+  font-size: 20px;
+  font-weight: bolder;
+  color: var(--white);
+  z-index: 2;
+
+  &.open {
+    right: 5px;
+    transform: rotate(-90deg);
+  }
+
+  @media (min-width: 631px) {
+    display: none;
+  }
+}

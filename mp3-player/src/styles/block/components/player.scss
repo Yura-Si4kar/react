@@ -1,0 +1,67 @@
+.player-info {
+  overflow: hidden;
+  width: 100%;
+}
+
+.player-name {
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+  animation: cycle 10s linear infinite;
+}
+
+.player__play-button {
+  & path {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: puls 5s infinite alternate;
+  }
+
+  &:hover path {
+    color: var(--white);
+    animation: move 1s infinite alternate;
+  }
+}
+
+.player__next-button:hover path,
+.player__prew-button:hover path {
+  animation: move 1s infinite alternate;
+}
+
+@keyframes puls {
+  0% {
+    fill: var(--color-sunny);
+  }
+  25% {
+    fill: var(--color-tangerine);
+  }
+  50% {
+    fill: var(--color-coral-pink);
+  }
+  75% {
+    fill: var(--color-fire-red);
+  }
+  100% {
+    fill: var(--color-deep-brown);
+  }
+}
+
+@keyframes move {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes cycle {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

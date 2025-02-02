@@ -1,0 +1,16 @@
+.album {
+  transition: width 0.3s;
+  padding-top: 35px;
+  position: relative;
+
+  &-setting {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    color: var(--white);
+
+    &:hover {
+      border: 1px solid var(--white);
+    }
+  }
+}

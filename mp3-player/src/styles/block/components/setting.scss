@@ -1,0 +1,56 @@
+.settings-section {
+  width: 100%;
+  transition: width 0.3s;
+  display: flex;
+  flex-direction: column;
+
+  .back-button {
+    align-self: flex-end;
+
+    .back-icon {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+.albums-settings-form {
+  .album-add-group {
+    .album-cover-input {
+      display: flex;
+      align-items: center;
+
+      .file-input {
+        width: 50%;
+
+        @media (min-width: 631px) {
+          width: auto;
+        }
+      }
+
+      .cover-label {
+        font-size: 14px;
+
+        @media (min-width: 631px) {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .album-info-inputs {
+      display: flex;
+      flex-direction: column;
+
+      @media (min-width: 631px) {
+        flex-direction: row;
+      }
+
+      .album-name-input {
+        width: 100%;
+
+        @media (min-width: 631px) {
+          width: 50%;
+        }
+      }
+    }
+  }
+}
