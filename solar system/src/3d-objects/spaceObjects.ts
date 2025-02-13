@@ -27,6 +27,8 @@ export function createPlanet(planet: PlanetsTypes, textureLoader: Three.TextureL
   const mesh = new Three.Mesh(geometry, material);
   // Планета розміщується на відстані від Сонця
   mesh.position.set(planet.distance, 0, 0);
+  // Застосовуємо осьовий нахил
+  mesh.rotation.z = Three.MathUtils.degToRad(planet.axisTilt);
   pivot.add(mesh);
   return { pivot, mesh };
 }
@@ -40,6 +42,8 @@ export function createSatellite(moon: MoonTypes, textureLoader: Three.TextureLoa
   const mesh = new Three.Mesh(geometry, material);
   // Супутник розміщується на відстані від планети
   mesh.position.set(moon.distance, 0, 0);
+  // Застосовуємо осьовий нахил
+  mesh.rotation.z = Three.MathUtils.degToRad(moon.axisTilt);
   pivot.add(mesh);
   return { pivot, mesh };
 }
@@ -49,7 +53,7 @@ export function createAsteroidBelt(textureLoader: Three.TextureLoader): Three.Gr
   const group = new Three.Group();
   const asteroidTexture = textureLoader.load('/images/satellites/asteriod.jpg');
   const material = new Three.MeshStandardMaterial({ map: asteroidTexture, color: 0xffffff });
-  const count = 1500;
+  const count = 5000;
   const innerBelt = 600; // нова внутрішня межа
   const outerBelt = 900; // нова зовнішня межа
 

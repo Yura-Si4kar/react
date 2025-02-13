@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as Three from 'three';
+import gsap from 'gsap';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Planet as PlanetsTypes } from '../types/type';
 import { createAsteroidBelt, createPlanet, createSatellite, createStarField, createSun } from '@/3d-objects/spaceObjects';
@@ -20,7 +21,7 @@ export function useThreeScene(planets: PlanetsTypes[]) {
       0.1,
       110999
     );
-    camera.position.set(0, 0, 100);
+    camera.position.set(0, 100, 500);
 
     const renderer = new Three.WebGLRenderer({
       antialias: true,
@@ -44,27 +45,28 @@ export function useThreeScene(planets: PlanetsTypes[]) {
     const sun = createSun(textureLoader);
     
     // Створюємо планети та супутники
-    const planetPivots: { pivot: Three.Object3D; speed: number }[] = [];
-    const moonPivots: { pivot: Three.Object3D; speed: number }[] = [];
+    const planetData: { pivot: Three.Object3D; mesh: Three.Mesh; orbitSpeed: number; rotationSpeed: number }[] = [];
+    const moonData: { pivot: Three.Object3D; mesh: Three.Mesh; orbitSpeed: number; rotationSpeed: number }[] = [];
 
     planets.forEach((planet) => {
-      // Створення планети – отримуємо і pivot, і mesh (саму планету)
       const { pivot, mesh } = createPlanet(planet, textureLoader);
       scene.add(pivot);
-      planetPivots.push({
+      planetData.push({
         pivot,
-        speed: planet.speed
+        mesh,
+        orbitSpeed: planet.speed,
+        rotationSpeed: planet.rotationSpeed || 0
       });
 
-      // Якщо у планети є супутники, додаємо їх як дочірні об'єкти планетного mesh
       if (planet.moons) {
         planet.moons.forEach((moon) => {
-          const { pivot: moonPivot } = createSatellite(moon, textureLoader);
-          // ВАЖЛИВО: додаємо півот супутника до planet.mesh, а не до pivot
+          const { pivot: moonPivot, mesh: moonMesh } = createSatellite(moon, textureLoader);
           mesh.add(moonPivot);
-          moonPivots.push({
+          moonData.push({
             pivot: moonPivot,
-            speed: moon.speed
+            mesh: moonMesh,
+            orbitSpeed: moon.speed,
+            rotationSpeed: moon.rotationSpeed || 0
           });
         });
       }
@@ -85,12 +87,18 @@ export function useThreeScene(planets: PlanetsTypes[]) {
     let animationFrameId: number;
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
-      planetPivots.forEach(({ pivot, speed }) => {
-        pivot.rotation.y += speed;
+
+      // Оновлюємо орбітальний рух планет та обертання навколо власної осі
+      planetData.forEach(({ pivot, mesh, orbitSpeed, rotationSpeed }) => {
+        pivot.rotation.y += orbitSpeed;
+        mesh.rotation.y += rotationSpeed;
       });
-      moonPivots.forEach(({ pivot, speed }) => {
-        pivot.rotation.y += speed;
+      // Оновлюємо орбітальний рух супутників та їх осьове обертання
+      moonData.forEach(({ pivot, mesh, orbitSpeed, rotationSpeed }) => {
+        pivot.rotation.y += orbitSpeed;
+        mesh.rotation.y += rotationSpeed;
       });
+      
       asteroidBelt.rotation.y += 0.001;
       controls.update();
       renderer.render(scene, camera);
@@ -105,9 +113,45 @@ export function useThreeScene(planets: PlanetsTypes[]) {
     };
     window.addEventListener('resize', handleResize);
 
+    // Додаємо обробник кліків
+    const onClick = (event: MouseEvent) => {
+      const mouse = new Three.Vector2();
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      const raycaster = new Three.Raycaster();
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(scene.children, true);
+
+      if (intersects.length > 0) {
+        const selectedObject = intersects[0].object;
+
+        // Оновлюємо ціль OrbitControls
+        controls.target.copy(selectedObject.position);
+
+        // Визначаємо відстань від камери до об'єкта
+        const offset = new Three.Vector3(0, 0, 100);
+        const targetPosition = selectedObject.position.clone().add(offset);
+
+        // Анімуємо камеру для плавного переходу
+        gsap.to(camera.position, {
+          duration: 1,
+          x: targetPosition.x,
+          y: targetPosition.y,
+          z: targetPosition.z,
+          onUpdate: () => {
+            controls.update();
+          }
+        });
+      }
+    };
+
+    renderer.domElement.addEventListener('dblclick', onClick, false);
+
     // Cleanup-функція
     return () => {
       window.removeEventListener('resize', handleResize);
+      renderer.domElement.removeEventListener('dblclick', onClick);
       cancelAnimationFrame(animationFrameId);
       controls.dispose();
       renderer.dispose();
