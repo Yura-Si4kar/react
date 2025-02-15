@@ -109,22 +109,27 @@
 
     &-checkbox:checked ~ &-option-a {
         transition-delay: 0.1s;
-        transform: translateY(-150px);
+        transform: translateY(-46px);
     }
 
     &-checkbox:checked ~ &-option-b {
       transition-delay: 0.2s;
-      transform: translateY(-110px) translateX(100px);
+      transform: translateY(-96px);
     }
 
     &-checkbox:checked ~ &-option-c {
       transition-delay: 0.3s;
-      transform: translateY(-40px) translateX(180px);
+      transform: translateY(-146px);
     }
 
     &-checkbox:checked ~ &-option-d {
-      transition-delay: 0.3s;
-      transform: translateY(20px) translateX(240px);
+      transition-delay: 0.4s;
+      transform: translateY(-196px);
+    }
+
+    &-checkbox:checked ~ &-option-e {
+      transition-delay: 0.5s;
+      transform: translateY(10px) translateX(70px);
     }
   }
 

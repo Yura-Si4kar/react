@@ -27,3 +27,8 @@ export interface Planet {
   moons?: Moon[]; // необов'язково, якщо у планети є супутники
   rings?: Ring[]; // необов'язково, якщо у планети є кільця
 }
+
+export interface StoreState {
+  trajectory: boolean;
+  isTrajectory: () => void;
+}

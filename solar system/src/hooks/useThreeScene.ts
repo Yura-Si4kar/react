@@ -3,14 +3,20 @@ import * as Three from 'three';
 import gsap from 'gsap';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Planet as PlanetsTypes } from '../types/type';
-import { createAsteroidBelt, createPlanet, createSatellite, createStarField, createSun } from '@/3d-objects/spaceObjects';
+import { createAsteroidBelt, createPlanet, createSatellite, createStarField, createSun, createOrbitTrajectory } from '@/3d-objects/spaceObjects';
+import { useStore } from '@/store/store';
 
 export function useThreeScene(planets: PlanetsTypes[]) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { trajectory } = useStore();
+
+  // Реф для збереження обраного об’єкта
+  const targetObjectRef = useRef<Three.Object3D | null>(null);
+  // Флаг, що вказує, чи в режимі "слідування"
+  const followModeRef = useRef<boolean>(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
-
     Three.Cache.enabled = true;
 
     // Створення сцени, камери та рендерера
@@ -57,6 +63,12 @@ export function useThreeScene(planets: PlanetsTypes[]) {
         orbitSpeed: planet.speed,
         rotationSpeed: planet.rotationSpeed || 0
       });
+      
+      if (!trajectory) { 
+        // Додаємо траєкторію руху планети
+        const orbitTrajectory = createOrbitTrajectory(planet.distance);
+        scene.add(orbitTrajectory);  
+      }
 
       if (planet.moons) {
         planet.moons.forEach((moon) => {
@@ -68,6 +80,11 @@ export function useThreeScene(planets: PlanetsTypes[]) {
             orbitSpeed: moon.speed,
             rotationSpeed: moon.rotationSpeed || 0
           });
+          if (!trajectory) {
+            // За потребою, можна також додати траєкторію для супутника
+            const moonOrbit = createOrbitTrajectory(moon.distance);
+            mesh.add(moonOrbit);
+          }
         });
       }
     });
@@ -88,18 +105,33 @@ export function useThreeScene(planets: PlanetsTypes[]) {
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      // Оновлюємо орбітальний рух планет та обертання навколо власної осі
+      // Оновлюємо орбітальний рух планет та їх обертання
       planetData.forEach(({ pivot, mesh, orbitSpeed, rotationSpeed }) => {
         pivot.rotation.y += orbitSpeed;
         mesh.rotation.y += rotationSpeed;
       });
-      // Оновлюємо орбітальний рух супутників та їх осьове обертання
+      // Оновлюємо рух супутників
       moonData.forEach(({ pivot, mesh, orbitSpeed, rotationSpeed }) => {
         pivot.rotation.y += orbitSpeed;
         mesh.rotation.y += rotationSpeed;
       });
       
       asteroidBelt.rotation.y += 0.001;
+
+      // Якщо режим слідування увімкнено, оновлюємо позицію камери
+      if (followModeRef.current && targetObjectRef.current) {
+        // Отримуємо світову позицію об'єкта
+        const objectWorldPos = new Three.Vector3();
+        targetObjectRef.current.getWorldPosition(objectWorldPos);
+        // Обираємо відступ від об'єкта для позиціонування камери
+        const offset = new Three.Vector3(0, 0, 100);
+        const desiredPos = objectWorldPos.clone().add(offset);
+        // Плавне наближення камери до бажаної позиції
+        camera.position.lerp(desiredPos, 0.05);
+        // Оновлюємо ціль контролів, щоб камера завжди дивилася на об'єкт
+        controls.target.lerp(objectWorldPos, 0.05);
+      }
+
       controls.update();
       renderer.render(scene, camera);
     };
@@ -113,27 +145,28 @@ export function useThreeScene(planets: PlanetsTypes[]) {
     };
     window.addEventListener('resize', handleResize);
 
-    // Додаємо обробник кліків
-    const onClick = (event: MouseEvent) => {
-      const mouse = new Three.Vector2();
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    // Обробник подвійного кліку
+    const onDblClick = (event: MouseEvent) => {
+      const mouse = new Three.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+      );
 
       const raycaster = new Three.Raycaster();
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
 
       if (intersects.length > 0) {
-        const selectedObject = intersects[0].object;
+        // Зберігаємо об'єкт для подальшого слідування
+        targetObjectRef.current = intersects[0].object;
+        followModeRef.current = true;
 
-        // Оновлюємо ціль OrbitControls
-        controls.target.copy(selectedObject.position);
+        // Початкове переміщення камери за допомогою gsap для більшого "вау"-ефекту
+        const objectWorldPos = new Three.Vector3();
+        targetObjectRef.current.getWorldPosition(objectWorldPos);
+        const offset = new Three.Vector3(0, 0, 300);
+        const targetPosition = objectWorldPos.clone().add(offset);
 
-        // Визначаємо відстань від камери до об'єкта
-        const offset = new Three.Vector3(0, 0, 100);
-        const targetPosition = selectedObject.position.clone().add(offset);
-
-        // Анімуємо камеру для плавного переходу
         gsap.to(camera.position, {
           duration: 1,
           x: targetPosition.x,
@@ -146,12 +179,12 @@ export function useThreeScene(planets: PlanetsTypes[]) {
       }
     };
 
-    renderer.domElement.addEventListener('dblclick', onClick, false);
+    renderer.domElement.addEventListener('dblclick', onDblClick, false);
 
     // Cleanup-функція
     return () => {
       window.removeEventListener('resize', handleResize);
-      renderer.domElement.removeEventListener('dblclick', onClick);
+      renderer.domElement.removeEventListener('dblclick', onDblClick);
       cancelAnimationFrame(animationFrameId);
       controls.dispose();
       renderer.dispose();
@@ -160,7 +193,7 @@ export function useThreeScene(planets: PlanetsTypes[]) {
         containerRef.current.removeChild(renderer.domElement);
       }
     };
-  }, [planets]);
+  }, [planets, trajectory]);
 
   return containerRef;
 }
