@@ -16,7 +16,7 @@ export const projects = [
         title: 'Юридична компанія Hlegals',
         skills: 'HTML, CSS, JS',
         src: 'https://hillel-html-css.netlify.app/',
-        gitHubLink: 'https://github.com/Yura-Si4kar/hillel_html_css',
+        gitHubLink: 'https://github.com/Yura-Si4kar/frontend/tree/master/Hlegals',
     },
     {
         id:4,
