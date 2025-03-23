@@ -23,27 +23,27 @@ export const projects = [
         title: 'Cases planner',
         skills: 'JS, MVC, REST API',
         src: 'https://cases-planner.netlify.app/',
-        gitHubLink: 'https://github.com/Yura-Si4kar/planner-mvc',
+        gitHubLink: 'https://github.com/Yura-Si4kar/frontend/tree/master/planner_mvc',
     },
     {
         id:5,
         title: 'Personal cryptoconverter',
         skills: 'HTML, CSS, JS, REST API',
         src: 'https://personalcryptoconverter.netlify.app/',
-        gitHubLink: 'https://github.com/Yura-Si4kar/currency-exchanger',
+        gitHubLink: 'https://github.com/Yura-Si4kar/frontend/tree/master/currency-exchanger',
     },
     {
         id:6,
         title: 'Restaurant App',
         skills: 'JS, React, SASS, Redux, MUI, Express, Mongoose',
         src: 'https://in-loft.vercel.app/',
-        gitHubLink: 'https://github.com/Yura-Si4kar/restaurant-inloft',
+        gitHubLink: 'https://github.com/Yura-Si4kar/fullstack/tree/master/restaurant-inloft',
     },
     {
         id:7,
         title: 'mp3-player',
         skills: 'JS, React, SASS, MobX, React-Bootstrap, Firebase',
-        src: 'https://mp3-player-three.vercel.app/login',
-        gitHubLink: 'https://github.com/Yura-Si4kar/mp3-player',
+        src: 'https://react-mu-mauve.vercel.app/login',
+        gitHubLink: 'https://github.com/Yura-Si4kar/react/tree/master/mp3-player',
     }
 ]
