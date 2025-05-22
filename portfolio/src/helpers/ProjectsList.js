@@ -2,13 +2,13 @@ export const projects = [
     {
         id:1,
         title: 'Сайт візитівка',
-        src: 'https://maestro-kids.store/',
+        src: 'https://maestro-kids.netlify.app/',
         skills: 'HTML, SASS, GSAP, Telegram Bot',
     },
     {
         id:2,
         title: 'Сайт візитівка',
-        src: 'https://www.vse-pro-eco.space/',
+        src: 'https://stirring-axolotl-a2b64a.netlify.app/',
         skills: 'HTML, SASS, GSAP, Telegram Bot',
     },
     {

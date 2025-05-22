@@ -1,3 +1,4 @@
+import * as Three from 'three'; 
 export interface Moon {
   name: string;
   radius: number;
@@ -30,5 +31,14 @@ export interface Planet {
 
 export interface StoreState {
   trajectory: boolean;
+  loading: boolean;
   isTrajectory: () => void;
+  isLoading: () => void; 
+}
+
+export interface Objects {
+  pivot: Three.Object3D;
+  mesh: Three.Mesh;
+  orbitSpeed: number;
+  rotationSpeed: number;
 }

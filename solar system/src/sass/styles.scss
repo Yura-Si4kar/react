@@ -1,6 +1,7 @@
-@import 'reset';
-@import 'variables';
-@import 'mixins';
-@import 'main';
-@import 'media-queries';
-@import 'blocks/navbar';
+@use 'reset';
+@use 'variables';
+@use 'mixins';
+@use 'main';
+@use 'media-queries';
+@use 'blocks/navbar';
+@use 'blocks/loading';
