@@ -37,7 +37,7 @@ export const projects = [
         title: 'Restaurant App',
         skills: 'JS, React, SASS, Redux, MUI, Express, Mongoose',
         src: 'https://in-loft.vercel.app/',
-        gitHubLink: 'https://github.com/Yura-Si4kar/fullstack/tree/master/restaurant-inloft',
+        gitHubLink: 'https://github.com/Yura-Si4kar/restaurant-inloft',
     },
     {
         id:7,
