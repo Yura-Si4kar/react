@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import './Header.css';
-import my_photo from '../../img/photo_2023-04-14_16-56-36.jpg';
+import my_photo from '../../img/photo.jpg';
 import useGsapAnimation from '../../hooks/useGsapAnimation';
 import Squares from '../../utils/canvasAnimation';
 
